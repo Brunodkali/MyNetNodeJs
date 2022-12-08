@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script Referrer-Policy: no-referrer-when-downgrade src="https://accounts.google.com/gsi/client" async defer></script>
+        <link rel="stylesheet" href="/public/css/style.css"/>
+
+        <title>Formulário de Login</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="content">      
+                <div id="login">
+                    <form method="POST" action="/loginDB"> 
+                        <h1>MyNet</h1> 
+                        <p> 
+                            <label for="nome_login">Login</label>
+                            <input id="nome_login" name="login" required="required" type="text" placeholder="Digite seu login"/>
+                        </p>
+                        <p> 
+                            <label for="email_login">Senha</label>
+                            <input id="email_login" name="senha" required="required" type="password" placeholder="Digite sua senha" /> 
+                        </p>
+                        <p> 
+                            <input type="submit" value="Entrar" /> 
+                        </p>
+                    </form>
+                    <div class="googleAuth"> 
+                        <div id="g_id_onload"
+                            data-client_id="245073186631-0aq6pl4ailrqeruehjuvhkk35iuem2e6.apps.googleusercontent.com"
+                            data-login_uri="http://localhost:3000/loginGoogle"
+                            data-auto_prompt="true"
+                            data-context="use">
+                        </div>
+                        <div class="g_id_signin"
+                            data-type="standard"
+                            data-size="large"
+                            data-theme="outline"
+                            data-text="sign_in_with"
+                            data-shape="rectangular"
+                            data-logo_alignment="left">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
