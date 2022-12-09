@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script Referrer-Policy: no-referrer-when-downgrade src="https://accounts.google.com/gsi/client" async defer></script>
+        <link rel="stylesheet" href="/public/css/style.css"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+        <title>Tela de Cadastro</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="content-1">      
+                <div id="login">
+                    <form method="POST" action="/cadastroDB"> 
+                        <h3>Alterar senha</h3> 
+                        <p> 
+                            <label for="senha_login">Digite sua nova senha</label>
+                            <input id="senha_login" name="senhaTroca" required="required" type="password" placeholder="Digite sua senha" /> 
+                        </p>
+                        <p> 
+                            <label for="senhaConf_login">Confirme a Senha</label>
+                            <input id="senhaConf_login" name="confSenhaTroca" required="required" type="password" placeholder="Confirme sua senha" /> 
+                        </p>
+                        <div class="entrar"> 
+                            <input type="submit" value="Cadastrar"/> 
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

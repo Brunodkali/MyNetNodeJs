@@ -5,32 +5,37 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script Referrer-Policy: no-referrer-when-downgrade src="https://accounts.google.com/gsi/client" async defer></script>
         <link rel="stylesheet" href="/public/css/style.css"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
-        <title>Formulário de Login</title>
+        <title>Tela de Login</title>
     </head>
     <body>
         <div class="container">
             <div class="content">      
                 <div id="login">
                     <form method="POST" action="/loginDB"> 
-                        <h1>MyNet</h1> 
+                        <h2>MyNet</h2> 
                         <p> 
-                            <label for="nome_login">Login</label>
-                            <input id="nome_login" name="login" required="required" type="text" placeholder="Digite seu login"/>
+                            <label for="email_login">E-mail</label>
+                            <input id="email_login" name="login" required="required" type="text" placeholder="Digite seu e-mail"/>
                         </p>
                         <p> 
-                            <label for="email_login">Senha</label>
-                            <input id="email_login" name="senha" required="required" type="password" placeholder="Digite sua senha" /> 
+                            <label for="senha_login">Senha</label>
+                            <input id="senha_login" name="senha" required="required" type="password" placeholder="Digite sua senha" /> 
                         </p>
-                        <p> 
-                            <input type="submit" value="Entrar" /> 
+                        <p class="cadastro"> 
+                            <a href="/cadastro">Cadastrar</a>
                         </p>
+                        <div class="entrar">
+                            <input type="submit" value="Entrar"/> 
+                        </div>
                     </form>
                     <div class="googleAuth"> 
                         <div id="g_id_onload"
                             data-client_id="245073186631-0aq6pl4ailrqeruehjuvhkk35iuem2e6.apps.googleusercontent.com"
                             data-login_uri="http://localhost:3000/loginGoogle"
-                            data-auto_prompt="true"
                             data-context="use">
                         </div>
                         <div class="g_id_signin"

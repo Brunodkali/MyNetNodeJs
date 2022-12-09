@@ -1,1 +1,43 @@
-<h1>Bem-vindo, <%=usuario %></h1>
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script Referrer-Policy: no-referrer-when-downgrade src="https://accounts.google.com/gsi/client" async defer></script>
+        <link rel="stylesheet" href="/public/css/style.css"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+        <title>Tela Principal</title>
+    </head>
+    <body>
+        <div class="entrar">
+            <div class="user-profile">
+                <div class="img"><img src="../public/img/user.png" alt="IMG_USER"></div>
+                <p>Informações do perfil</p>
+                <div class="user">
+                    <input id="user" name="user" required="required" type="text" placeholder="Usuário"/>
+                </div>
+
+                <div class="email">
+                    <input id="email" name="email" required="required" type="text" placeholder="E-mail"/>
+                </div>
+                <form method="POST" action="/trocarSenha">
+                    <div class="psswd">
+                        <button id="psswd">Alterar senha</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById("user").value = '<%= usuario %>';
+            document.getElementById("email").value = '<%= email %>';
+            // document.getElementById("psswd").value = '<%= senha %>';
+        </script>
+        <!-- Ícones -->
+        <script src="https://kit.fontawesome.com/a9ac96b7ba.js" 
+        crossorigin="anonymous"></script>
+    </body>
+</html>
