@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
 const port = process.env.port || 3000;
 const path = require('path');
 const userRouteGoogle = require('./routes/googleAuth.js');
@@ -15,18 +14,6 @@ app.use('/', userRouteGoogle, userRouteDB);
 app.get('/', (req, res) => {
     res.render('index');
 });
-
-let messages = [];
-
-io.on('connection', socket => {
-    console.log(`Socket conectado ${socket.id}`);
-    socket.emit('previousMessage', messages);
-    socket.on('sendMessage', data => {
-       messages.push(data);
-       socket.broadcast.emit('receivedMessage', data);
-    });
-});
-
 
 server.listen(port, (req, res) => {
     console.log(`Servidor rodando em ${port}`);

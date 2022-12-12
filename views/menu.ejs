@@ -43,17 +43,24 @@
         </form>
 
         <script type="text/javascript">
-            var socket = io('http://localhost:5000');
+            var socket = io('http://localhost:3000');
     
             function renderMessage(message) {
-                $('.messages').append('<div class="message"><strong>' + message.author + '</strong>:' + message.message + '</div>')
+                $('.messages').append('<div class="message"><strong>' + message.author + '</strong>:' + message.message + '</div><br>')
             }
     
-            socket.on('previousMessage', function(messagePrevious) {
-                for (message of messagePrevious) {
-                    renderMessage(message);
+            socket.on('previousMessage', function(msgsDatabase) {
+                for (let i = 0; i < msgsDatabase.length; i++) {
+                    const author = msgsDatabase[i]['msg']['author'];
+                    const message = msgsDatabase[i]['msg']['message'];
+                    console.log(author, message)
+                    var objdatabase = {
+                            author: author,
+                            message: message
+                    };
+                    renderMessage(objdatabase);
                 }
-            });
+            }); 
     
             socket.on('receivedMessage', function(messageReceive) {
                 renderMessage(messageReceive);
@@ -64,6 +71,7 @@
     
                 var author = $('input[name=username]').val();
                 var message = $('input[name=mensagem]').val();
+
     
                 if (author.length && message.length) {
                     var mensagemObj = {
@@ -72,7 +80,8 @@
                     };
     
                     renderMessage(mensagemObj);
-                    socket.emit('sendMessage', mensagemObj)
+                    socket.emit('sendMessage', mensagemObj);
+                    $('input[name=mensagem]').val("");
                 }
             });
         </script>
