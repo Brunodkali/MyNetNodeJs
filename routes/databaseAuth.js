@@ -11,22 +11,25 @@ routerDbAuth.get('/cadastro', (req, res) => {
     res.render('cadastro', { status: 200 });
 });
 
+routerDbAuth.get('/trocarSenha', async(req, res) => {
+    res.render('trocarSenha', { status: 200 });
+});
+
 routerDbAuth.post('/loginDB', async (req, res)=> {
     try{
         let login = req.body.login;
         let senha = req.body.senha;
         let senhaHash = md5(senha);
-        let users = await database.collection('usuarios').find().toArray();
+        let select = await database.collection('usuarios').find().toArray();
 
         try {
-            for(let i = 0; i < users.length; i++) {
-                let emailUsuario = users[i].email;
-                let senhaUsuario = users[i].senha;
-                let nomeUsuario = users[i].name;
-                let senhaExibir = md5(senhaUsuario);
+            for(let i = 0; i < select.length; i++) {
+                let emailUsuario = select[i].email;
+                let senhaUsuario = select[i].senha;
+                let nomeUsuario = select[i].name;
                 
                 if(login == emailUsuario && senhaHash == senhaUsuario){
-                    return res.status(200).render('menu', { usuario: nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1), email: emailUsuario, senha: senhaExibir   });
+                    return res.status(200).render('menu', { usuario: nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1), email: emailUsuario, auth: 'databaseAuth' });
                 }
             }
             if (login != null || senha != null) {
@@ -62,20 +65,25 @@ routerDbAuth.post('/cadastroDB', async(req, res) => {
 });
 
 routerDbAuth.post('/trocarSenha', async(req, res) => {
-    res.render('trocarSenha');
-
+    let emailTroca = req.body.emailTroca;
     let senhaTroca = req.body.senhaTroca;
     let confSenhaTroca = req.body.confSenhaTroca;
 
     try {
         if (senhaTroca == confSenhaTroca) {
-            let hashSenha = md5(senha);
-            let doc = { name: nome, email: login, senha: hashSenha }
-            let insert = await database.collection('usuarios').insertOne(doc);
+            let filter = { email: emailTroca };
+            let options = { upsert: false };
+            let hashSenhaNova = md5(senhaTroca);
+            let senhaNova = { 
+               $set: {
+                    senha: hashSenhaNova 
+                }
+            }
+            let update = await database.collection('usuarios').updateOne(filter, senhaNova, options);
 
             return res.status(200).render('index');
         }else {
-            return res.status(401).render('cadastro', { status: 401 });
+            return res.status(401).render('trocarSenha', { status: 401 });
         }
     }catch(err) {
         return err;

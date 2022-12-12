@@ -25,8 +25,9 @@ routerGoogle.post('/loginGoogle', (req, res) => {
             });
             const payload = ticket.getPayload();
             const nomeUser = payload["name"];
+            const emailUser = payload["email"];
 
-            return res.status(200).render('menu', {usuario: nomeUser});
+            return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, auth: 'googleAuth' });
         }catch(err) {
             return err;
         }

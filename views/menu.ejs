@@ -4,6 +4,8 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script Referrer-Policy: no-referrer-when-downgrade src="https://accounts.google.com/gsi/client" async defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js" integrity="sha512-YeeA/Qxn5hYdkukScTCNNOhTrv1C2RubAGButJ1rmgQwZf/HdRaCGl+JAVkqsqaNRaYNHdheiuKKuPf9mDcqKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <link rel="stylesheet" href="/public/css/style.css"/>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,27 +16,72 @@
     <body>
         <div class="entrar">
             <div class="user-profile">
-                <div class="img"><img src="../public/img/user.png" alt="IMG_USER"></div>
+                <div id="image" class="img"><img src="../public/img/user.png" alt="IMG_USER"></div>
                 <p>Informações do perfil</p>
                 <div class="user">
-                    <input id="user" name="user" required="required" type="text" placeholder="Usuário"/>
+                    <input id="user" name="user" required="required" type="text" placeholder="Usuário" readonly/>
                 </div>
 
                 <div class="email">
-                    <input id="email" name="email" required="required" type="text" placeholder="E-mail"/>
+                    <input id="email" name="email" required="required" type="text" placeholder="E-mail" readonly/>
                 </div>
-                <form method="POST" action="/trocarSenha">
-                    <div class="psswd">
-                        <button id="psswd">Alterar senha</button>
-                    </div>
-                </form>
+                <% if(auth != 'googleAuth'){ %>
+                    <form id="formAltSenha" method="GET" action="/trocarSenha">
+                        <div class="psswd">
+                            <button id="psswd">Alterar senha</button>
+                        </div>
+                    </form>
+                <% } %>
             </div>
         </div>
 
+        <form id="chat">
+            <input id="username" type="text" name="username" placeholder="Usuário no chat" readonly>
+            <div class="messages"></div>
+            <input type="text" name="mensagem" placeholder="Digite sua mensagem..." autocomplete="off">
+            <button type="submit">Enviar</button>
+        </form>
+
+        <script type="text/javascript">
+            var socket = io('http://localhost:5000');
+    
+            function renderMessage(message) {
+                $('.messages').append('<div class="message"><strong>' + message.author + '</strong>:' + message.message + '</div>')
+            }
+    
+            socket.on('previousMessage', function(messagePrevious) {
+                for (message of messagePrevious) {
+                    renderMessage(message);
+                }
+            });
+    
+            socket.on('receivedMessage', function(messageReceive) {
+                renderMessage(messageReceive);
+            });
+    
+            $('#chat').submit(function(event) {
+                event.preventDefault();
+    
+                var author = $('input[name=username]').val();
+                var message = $('input[name=mensagem]').val();
+    
+                if (author.length && message.length) {
+                    var mensagemObj = {
+                        author: author,
+                        message: message
+                    };
+    
+                    renderMessage(mensagemObj);
+                    socket.emit('sendMessage', mensagemObj)
+                }
+            });
+        </script>
+
         <script>
             document.getElementById("user").value = '<%= usuario %>';
+            document.getElementById("username").value = '<%= usuario %>';
+            document.getElementById("username").style.display = 'none';
             document.getElementById("email").value = '<%= email %>';
-            // document.getElementById("psswd").value = '<%= senha %>';
         </script>
         <!-- Ícones -->
         <script src="https://kit.fontawesome.com/a9ac96b7ba.js" 

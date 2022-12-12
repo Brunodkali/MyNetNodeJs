@@ -18,7 +18,7 @@
 }
 
 h2 {
-    font-size: 48px;
+    font-size: 40px;
     color: #066a75;
     padding: 2px 0 10px 0;
     font-family: Poppins;
@@ -28,13 +28,14 @@ h2 {
 }
 
 h3 {
-    font-size: 30px;
+    font-size: 24px;
     color: #066a75;
     padding: 2px 0 10px 0;
     font-family: Poppins;
     font-weight: 500;
     text-align: center;
     padding-bottom: 30px;
+    margin-top: 10px;
 }
 
 p {
@@ -185,3 +186,62 @@ input[type="submit"]:hover {
     position: absolute;
     top: 15%;
 }
+
+/* Chat */  
+#chat {
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 2vw;
+}
+  
+#chat input {
+    width: 32vw;
+    border: 1px solid #ddd;
+    height: 2vw;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 8px;
+}
+  
+#chat button {
+    width: 7vw;
+    height: 2.2vw;
+    font-size: 20px;
+    border-radius: 15px;
+    align-items: center;
+    background: #069;
+    text-align: center;
+    font-weight: bold;
+    color: #FFF;
+    border: none;
+    margin-top: 20px;
+}
+
+#chat button:hover {
+    cursor: pointer;
+}
+  
+.messages {
+    width: 30vw;
+    height: 10vw;
+    margin: 2vw 0;
+    border: 1px solid #ddd;
+    padding: 2vw;
+    border-radius: 8px;
+}
+  
+@media screen and (max-width: 990px) {
+    .messages {
+      width: 90%;
+      height: 60%;
+    }
+  
+    #chat input,
+    #chat button {
+      height: 2rem;
+      font-size: 1rem;
+    }
+  }
