@@ -2,6 +2,7 @@ const express = require('express');
 const cookies = require("cookie-parser");
 const bodyParser = require("body-parser");
 const routerGoogle = express.Router();
+const database = require('../models/database.js');
 
 routerGoogle.use(cookies());
 routerGoogle.use(bodyParser.urlencoded({ extended: true }));
@@ -26,8 +27,9 @@ routerGoogle.post('/loginGoogle', (req, res) => {
             const payload = ticket.getPayload();
             const nomeUser = payload["name"];
             const emailUser = payload["email"];
+            const listaUsuarios = await database.collection('usuarios').find().toArray();
 
-            return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, auth: 'googleAuth' });
+            return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
         }catch(err) {
             return err;
         }

@@ -34,6 +34,15 @@
                 <% } %>
             </div>
         </div>
+        <div id="usuarios" class="usuarios">
+            <ul>
+                <% for(let i = 0; i < listaUsuarios.length; i++) {%>
+                    <li>
+                        Nome: <%= listaUsuarios[i].name %>
+                    </li>
+                <% } %>
+            </ul>   
+        </div>
 
         <form id="chat">
             <input id="username" type="text" name="username" placeholder="Usuário no chat" readonly>
@@ -53,8 +62,7 @@
                 for (let i = 0; i < msgsDatabase.length; i++) {
                     const author = msgsDatabase[i]['msg']['author'];
                     const message = msgsDatabase[i]['msg']['message'];
-                    console.log(author, message)
-                    var objdatabase = {
+                    let objdatabase = {
                             author: author,
                             message: message
                     };
@@ -62,21 +70,18 @@
                 }
             }); 
     
-            socket.on('receivedMessage', function(messageReceive) {
-                renderMessage(messageReceive);
-            });
-    
             $('#chat').submit(function(event) {
                 event.preventDefault();
-    
-                var author = $('input[name=username]').val();
-                var message = $('input[name=mensagem]').val();
+                let author = $('input[name=username]').val();
+                let message = $('input[name=mensagem]').val();
+                let email = $('input[name=email]').val();
 
     
                 if (author.length && message.length) {
                     var mensagemObj = {
                         author: author,
-                        message: message
+                        message: message,
+                        emailRemetente: email
                     };
     
                     renderMessage(mensagemObj);
@@ -88,9 +93,9 @@
 
         <script>
             document.getElementById("user").value = '<%= usuario %>';
+            document.getElementById("email").value = '<%= email %>';
             document.getElementById("username").value = '<%= usuario %>';
             document.getElementById("username").style.display = 'none';
-            document.getElementById("email").value = '<%= email %>';
         </script>
         <!-- Ícones -->
         <script src="https://kit.fontawesome.com/a9ac96b7ba.js" 

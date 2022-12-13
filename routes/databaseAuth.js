@@ -3,6 +3,11 @@ const bodyParser = require("body-parser");
 const routerDbAuth = express.Router();
 const database = require('../models/database.js');
 const md5 = require('md5');
+const Usuarios = database.model('usuarios', {
+    name: String,
+    email: String,
+    senha: String,
+});
 
 routerDbAuth.use(bodyParser.urlencoded({ extended: true }));
 routerDbAuth.use(bodyParser.json());
@@ -20,16 +25,16 @@ routerDbAuth.post('/loginDB', async (req, res)=> {
         let login = req.body.login;
         let senha = req.body.senha;
         let senhaHash = md5(senha);
-        let select = await database.collection('usuarios').find().toArray();
+        let listaUsuarios = await Usuarios.find();
 
         try {
-            for(let i = 0; i < select.length; i++) {
-                let emailUsuario = select[i].email;
-                let senhaUsuario = select[i].senha;
-                let nomeUsuario = select[i].name;
+            for(let i = 0; i < listaUsuarios.length; i++) {
+                let emailUsuario = listaUsuarios[i].email;
+                let senhaUsuario = listaUsuarios[i].senha;
+                let nomeUsuario = listaUsuarios[i].name;
                 
                 if(login == emailUsuario && senhaHash == senhaUsuario){
-                    return res.status(200).render('menu', { usuario: nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1), email: emailUsuario, auth: 'databaseAuth' });
+                    return res.status(200).render('menu', { usuario: nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1), email: emailUsuario, auth: 'databaseAuth', listaUsuarios: listaUsuarios });
                 }
             }
             if (login != null || senha != null) {
