@@ -45,7 +45,8 @@
         </div>
 
         <form id="chat">
-            <input id="username" type="text" name="username" placeholder="Usuário no chat" readonly>
+            <input id="username" type="text" name="username" placeholder="Remetente">
+            <input id="to" type="text" name="to" placeholder="Destinatario">
             <div class="messages"></div>
             <input type="text" name="mensagem" placeholder="Digite sua mensagem..." autocomplete="off">
             <button type="submit">Enviar</button>
@@ -95,7 +96,9 @@
             document.getElementById("user").value = '<%= usuario %>';
             document.getElementById("email").value = '<%= email %>';
             document.getElementById("username").value = '<%= usuario %>';
+            document.getElementById("to").value = 'Bruno Duarte';
             document.getElementById("username").style.display = 'none';
+            document.getElementById("to").style.display = 'none';
         </script>
         <!-- Ícones -->
         <script src="https://kit.fontawesome.com/a9ac96b7ba.js" 

@@ -1,7 +1,8 @@
 const Usuarios = require("../models/userModel");
 const md5 = require('md5');
+const { getMessages } = require("../controllers/messageController");
 
-module.exports.login = async (req, res, next) => {
+module.exports.login = async (req, res) => {
     try{
         let login = req.body.login;
         let senha = req.body.senha;
@@ -15,7 +16,12 @@ module.exports.login = async (req, res, next) => {
                 let nomeUsuario = listaUsuarios[i].name;
                 
                 if(login == emailUsuario && senhaHash == senhaUsuario){
-                    return res.status(200).render('menu', { usuario: nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1), email: emailUsuario, auth: 'databaseAuth', listaUsuarios: listaUsuarios });
+                    return res.status(200).render('menu', getMessages, { 
+                        usuario: nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1), 
+                        email: emailUsuario, 
+                        auth: 'databaseAuth', 
+                        listaUsuarios: listaUsuarios
+                    });
                 }
             }
             if (login != null || senha != null) {
@@ -29,60 +35,60 @@ module.exports.login = async (req, res, next) => {
     }
 };
 
-module.exports.registrar = async (req, res, next) => {
-    let login = req.body.login;
-    let nome = req.body.nome;
-    let senha = req.body.senha;
-    let confSenha = req.body.confSenha;
-    let user = new Usuarios({
-        name: nome  ,
-        email: login,
-        password: senha,
-    });
-
+module.exports.registrar = async (req, res) => {
     try {
-        if (senha == confSenha) {
-            let hashSenha = md5(senha);
-            let insert = await user.save((err, userDB)=> {
-                if(err){
-                    return res.status(400).json({
-                       ok: false,
-                       err  
-                    });
-                }
+        let login = req.body.login;
+        let nome = req.body.nome;
+        let senha = req.body.senha;
+        let confSenha = req.body.confSenha;
+    
+        try {
+            if (senha == confSenha) {
+                let hashSenha = md5(senha);
+                let user = await Usuarios.create({
+                    name: nome,
+                    email: login,
+                    senha: hashSenha
+                });
                 return res.status(200).render('index');
-            });
-        }else {
-            return res.status(401).render('cadastro', { status: 401 });
+            }else {
+                return res.status(401).render('cadastro', { status: 401 });
+            }
+        }catch(err) {
+            return err;
         }
     }catch(err) {
-        return err;
+        return err;   
     }
 };
 
 module.exports.trocarSenha = async (req, res, next) => {
-    let emailTroca = req.body.emailTroca;
-    let senhaTroca = req.body.senhaTroca;
-    let confSenhaTroca = req.body.confSenhaTroca;
-
     try {
-        if (senhaTroca == confSenhaTroca) {
-            let filter = { email: emailTroca };
-            let options = { upsert: false };
-            let hashSenhaNova = md5(senhaTroca);
-            let senhaNova = { 
-               $set: {
-                    senha: hashSenhaNova 
+        let emailTroca = req.body.emailTroca;
+        let senhaTroca = req.body.senhaTroca;
+        let confSenhaTroca = req.body.confSenhaTroca;
+    
+        try {
+            if (senhaTroca == confSenhaTroca) {
+                let filter = { email: emailTroca };
+                let options = { upsert: false };
+                let hashSenhaNova = md5(senhaTroca);
+                let senhaNova = { 
+                   $set: {
+                        senha: hashSenhaNova 
+                    }
                 }
+                let update = await Usuarios.updateOne(filter, senhaNova, options);
+    
+                return res.status(200).render('index');
+            }else {
+                return res.status(401).render('trocarSenha', { status: 401 });
             }
-            let update = await database.collection('usuarios').updateOne(filter, senhaNova, options);
-
-            return res.status(200).render('index');
-        }else {
-            return res.status(401).render('trocarSenha', { status: 401 });
+        }catch(err) {
+            return err;
         }
     }catch(err) {
-        return err;
+        return err
     }
 };
 
