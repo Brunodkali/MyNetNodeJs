@@ -1,23 +1,7 @@
-const express = require('express');
-const bodyParser = require("body-parser");
-const routerDbAuth = express.Router();
-const database = require('../models/database.js');
-const md5 = require('md5');
 const Usuarios = require("../models/userModel");
+const md5 = require('md5');
 
-
-routerDbAuth.use(bodyParser.urlencoded({ extended: true }));
-routerDbAuth.use(bodyParser.json());
-
-routerDbAuth.get('/cadastro', (req, res) => {
-    res.render('cadastro', { status: 200 });
-});
-
-routerDbAuth.get('/trocarSenha', async(req, res) => {
-    res.render('trocarSenha', { status: 200 });
-});
-
-routerDbAuth.post('/loginDB', async (req, res)=> {
+module.exports.login = async (req, res, next) => {
     try{
         let login = req.body.login;
         let senha = req.body.senha;
@@ -43,30 +27,40 @@ routerDbAuth.post('/loginDB', async (req, res)=> {
     }catch(err) {
         return res.send('Ocorreu um erro na autenticação');
     }
-});
+};
 
-routerDbAuth.post('/cadastroDB', async(req, res) => {
+module.exports.registrar = async (req, res, next) => {
     let login = req.body.login;
     let nome = req.body.nome;
     let senha = req.body.senha;
     let confSenha = req.body.confSenha;
+    let user = new Usuarios({
+        name: nome  ,
+        email: login,
+        password: senha,
+    });
 
     try {
         if (senha == confSenha) {
             let hashSenha = md5(senha);
-            let doc = { name: nome, email: login, senha: hashSenha }
-            let insert = await database.collection('usuarios').insertOne(doc);
-
-            return res.status(200).render('index');
+            let insert = await user.save((err, userDB)=> {
+                if(err){
+                    return res.status(400).json({
+                       ok: false,
+                       err  
+                    });
+                }
+                return res.status(200).render('index');
+            });
         }else {
             return res.status(401).render('cadastro', { status: 401 });
         }
     }catch(err) {
         return err;
     }
-});
+};
 
-routerDbAuth.post('/trocarSenha', async(req, res) => {
+module.exports.trocarSenha = async (req, res, next) => {
     let emailTroca = req.body.emailTroca;
     let senhaTroca = req.body.senhaTroca;
     let confSenhaTroca = req.body.confSenhaTroca;
@@ -90,6 +84,28 @@ routerDbAuth.post('/trocarSenha', async(req, res) => {
     }catch(err) {
         return err;
     }
-});
+};
 
-module.exports = routerDbAuth;
+module.exports.getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({ _id: { $ne: req.params.id } }).select([
+      "email",
+      "username",
+      "avatarImage",
+      "_id",
+    ]);
+    return res.json(users);
+  } catch (ex) {
+    next(ex);
+  }
+};
+
+module.exports.logOut = (req, res, next) => {
+  try {
+    if (!req.params.id) return res.json({ msg: "User id is required " });
+    onlineUsers.delete(req.params.id);
+    return res.status(200).send();
+  } catch (ex) {
+    next(ex);
+  }
+}; 
