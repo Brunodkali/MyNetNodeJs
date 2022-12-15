@@ -6,11 +6,6 @@ const MessageSchema = mongoose.Schema(
       text: { type: String, required: true },
     },
     users: Array,
-    sender: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Usuario",
-      required: true,
-    },
   },
   {
     timestamps: true,

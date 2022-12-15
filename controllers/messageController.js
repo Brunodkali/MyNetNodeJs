@@ -1,17 +1,28 @@
 const Mensagens = require("../models/messageModel");
 
-module.exports.getMessages = async (req, res) => {
+module.exports.getMessages = async (req, res, next) => {
   try {
     const from = req.body.username;
     const to = req.body.to;
-    console.log(from, to);
-    const messages = await Mensagens.find({
+    const emailUsuario = req.body.email;
+    const auth = req.body.auth;
+
+    res.render('menu', { 
+      usuario: from, 
+      email: emailUsuario, 
+      auth: auth, 
+      listaUsuarios: 'listaUsuarios',
+    });
+    
+    const msgsDatabase = await Mensagens.find({
       users: {
-       from: from,
-       to: to,
+        from: from,
+        to: to,
       },
-    }).sort({ updatedAt: 1 });
-  }catch(err) {
+    });
+    req.msgsDatabase = msgsDatabase
+    next();
+ }catch(err) {
     return err;
   }
 };

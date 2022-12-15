@@ -25,8 +25,9 @@
                 <div class="email">
                     <input id="email" name="email" required="required" type="text" placeholder="E-mail" readonly/>
                 </div>
-                <% if(auth != 'googleAuth'){ %>
+                <% if(auth == 'databaseAuth'){ %>
                     <form id="formAltSenha" method="GET" action="/trocarSenha">
+                        <input type="text" name="auth" value="databaseAuth" hidden>
                         <div class="psswd">
                             <button id="psswd">Alterar senha</button>
                         </div>
@@ -43,46 +44,59 @@
                 <% } %>
             </ul>   
         </div>
-
-        <form id="chat">
+        
+        <form action="/getmsg" method="post">
             <input id="username" type="text" name="username" placeholder="Remetente">
             <input id="to" type="text" name="to" placeholder="Destinatario">
+            <button>Teste</button>
+        </form>
+
+        <form id="chat">
             <div class="messages"></div>
             <input type="text" name="mensagem" placeholder="Digite sua mensagem..." autocomplete="off">
             <button type="submit">Enviar</button>
         </form>
 
         <script type="text/javascript">
-            var socket = io('http://localhost:3000');
-    
+            var socket = io();
+            console.log('teste1 - Okay')
+
             function renderMessage(message) {
-                $('.messages').append('<div class="message"><strong>' + message.author + '</strong>:' + message.message + '</div><br>')
+                $('.messages').append('<div class="message"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>')
             }
     
-            socket.on('previousMessage', function(msgsDatabase) {
+            socket.on('previousMessage', async function(msgsDatabase) {
+                console.log('teste2 - Okay');
+
                 for (let i = 0; i < msgsDatabase.length; i++) {
-                    const author = msgsDatabase[i]['msg']['author'];
-                    const message = msgsDatabase[i]['msg']['message'];
+                    const from = msgsDatabase[i]['users']['from'];
+                    const message = msgsDatabase[i]['message'];
                     let objdatabase = {
-                            author: author,
-                            message: message
+                        message: message,
+                        users: {
+                            from: from,
+                            to: to,
+                        }
                     };
-                    renderMessage(objdatabase);
+                    await renderMessage(objdatabase);
                 }
             }); 
     
             $('#chat').submit(function(event) {
                 event.preventDefault();
-                let author = $('input[name=username]').val();
+                let from = $('input[name=username]').val();
+                let to = $('input[name=to]').val();
                 let message = $('input[name=mensagem]').val();
                 let email = $('input[name=email]').val();
 
     
-                if (author.length && message.length) {
-                    var mensagemObj = {
-                        author: author,
+                if (from.length && message.length) {
+                    let mensagemObj = {
                         message: message,
-                        emailRemetente: email
+                        users: {
+                            from: from,
+                            to: to,
+                        }
                     };
     
                     renderMessage(mensagemObj);

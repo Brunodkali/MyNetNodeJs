@@ -1,6 +1,6 @@
 const Usuarios = require("../models/userModel");
+const Mensagens = require("../models/messageModel");
 const md5 = require('md5');
-const { getMessages } = require("../controllers/messageController");
 
 module.exports.login = async (req, res) => {
     try{
@@ -16,11 +16,12 @@ module.exports.login = async (req, res) => {
                 let nomeUsuario = listaUsuarios[i].name;
                 
                 if(login == emailUsuario && senhaHash == senhaUsuario){
-                    return res.status(200).render('menu', getMessages, { 
-                        usuario: nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1), 
+                    let usuario = nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1)
+                    res.render('menu', { 
+                        usuario: usuario, 
                         email: emailUsuario, 
                         auth: 'databaseAuth', 
-                        listaUsuarios: listaUsuarios
+                        listaUsuarios: listaUsuarios,
                     });
                 }
             }

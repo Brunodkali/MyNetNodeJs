@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
     },
     senha: {
         type: String
-    },
+    }
 });
 
 module.exports = mongoose.model("usuarios", userSchema);
