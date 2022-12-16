@@ -8,8 +8,7 @@ const bodyParser = require("body-parser");
 const cors = require('cors');
 const userRouteGoogle = require('./routes/googleAuth.js');
 const authRoutes = require("./routes/userRouter.js");
-const { getMessages } = require("./controllers/messageController");
-const { axios } = require('axios');
+const Mensagens = require("./models/messageModel");
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/views'));
@@ -23,33 +22,40 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.post("/getmsg", getMessages, async (req, res)=> {
-    var mensagem = req.msgsDatabase;
-    console.log(mensagem);
-});
+io.on('connection', async (socket) => {
+  console.log(`Chat conectado ${socket.id}`);
+  socket.on('disconnect', () => {
+    console.log(`${socket.id} disconnected`);
+  });
 
-io.on('connection', (socket) => {
-    var json = [
-        {
-          message: 'Olá',
-          users: {
-            from:  'Bruno',
-            to: 'Bruno Duarte',
-          }
-        }
-    ]
-    console.log(`Chat conectado ${socket.id}`);
-    socket.on('disconnect', () => {
-      console.log(`${socket.id} disconnected`);
+  socket.on('escolhaPessoa', async data => {
+    const from = data['users']['from'];
+    const to =  data['users']['to'];
+    const msgsDatabase = await Mensagens.find({
+      users: {
+        from: from,
+        to: to,
+      },
     });
+    socket.emit('previousMessage', msgsDatabase);
+  });
 
-    socket.emit('previousMessage', json);
-
-    socket.on('sendMessage', data => {
-        axios.get('http://localhost/addmsg').then(resp => {
-        console.log(resp.data);
-        });
-    });
+  socket.on('sendMessage', async data => {
+    try {
+      const from = data['users']['from'];
+      const to = data['users']['to'];
+      const message = data['message'];
+      const msgadd = await Mensagens.create({
+        message: message ,
+        users: {
+          from,
+          to
+        },
+      });
+    }catch(err) {
+      return err;
+    }
+  });
 });
 
 server.listen(port, (req, res) => {

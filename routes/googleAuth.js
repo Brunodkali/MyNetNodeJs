@@ -29,7 +29,7 @@ routerGoogle.post('/loginGoogle', (req, res) => {
             const emailUser = payload["email"];
             const listaUsuarios = await database.collection('usuarios').find().toArray();
 
-            return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
+            return res.status(200).render('indexa', { usuario: nomeUser, email: emailUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
         }catch(err) {
             return err;
         }

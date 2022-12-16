@@ -3,9 +3,12 @@ const mongoose = require("mongoose");
 const MessageSchema = mongoose.Schema(
   {
     message: {
-      text: { type: String, required: true },
+       type: String, required: true
     },
-    users: Array,
+    users: { 
+        from: { type: String },
+        to: { type: String }
+    }
   },
   {
     timestamps: true,
