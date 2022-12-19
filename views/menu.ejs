@@ -24,7 +24,7 @@
                 <div class="div-1">
                     <div>
                         <% for(let i = 0; i < listaUsuarios.length; i++) {%>
-                        <form id='<%= i %>'>
+                        <form id='<%= i %>' class="form">
                             <input type="submit" name="to" value='<%= listaUsuarios[i].name[0].toUpperCase() + listaUsuarios[i].name.substr(1) %>'></>
                             <i class="fa fa-ellipsis-vertical"></i>
                         </form>
@@ -36,7 +36,7 @@
                 <div class="div-1">
                     <div>
                         <% for(let i = 0; i < listaUsuarios.length; i++) {%>
-                        <form>
+                        <form class="form">
                             <input type="submit" name="to" value='<%= listaUsuarios[i].name[0].toUpperCase() + listaUsuarios[i].name.substr(1) %>'></>
                             <i class="fa fa-ellipsis-vertical"></i>
                         </form>
@@ -65,6 +65,7 @@
                 <form id="chat" class="div-mensagens">
                     <div class="texto-mensagens"></div>
                     <div class="input-mensagens">
+                        <input name="toDo" value='0' hidden></>
                         <input type="text" name="mensagem" placeholder="Digite uma mensagem..." autocomplete="off">
                         <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
@@ -80,66 +81,82 @@
         <script type="text/javascript">
             var socket = io();
 
-            async function renderMessage(message) {
+            async function renderMessageFrom(message) {
                 await $('.texto-mensagens').append('<div class="envia"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>')
             }
 
-            $(".div-1").click(function() {
-                $('form').submit(function(event) {
+            async function renderMessageTo(message) {
+                await $('.texto-mensagens').append('<div class="recebe"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>')
+            }
+
+            $('.form').submit(function(event) {
                 event.preventDefault();
                 let id = $(this).attr("id");
                 let from = $('input[name=user]').val();
-                let to = $('form').find(`${id}`);
-
-                console.log(id);
-                console.log(to);
-
-                    if(from.length && to.length) {
-                        let mensagemObj = {
-                            users: {
-                                from: from,
-                                to: to,
-                            }
-                        };
-                        socket.emit('escolhaPessoa', mensagemObj);
-                    }
+                let to = $(`#${id}`).find(`input[name=to]`).val();
+                let toDo = $('input[name=toDo]').val(`${to}`);
+                let mensagemObj = {
+                    users: {
+                        from: from,
+                        to: to,
+                        }
+                    };
+                    $('.texto-mensagens').html("");
+                    socket.emit('escolhaPessoa', mensagemObj);
                 });
-            });
            
-
-            socket.on('previousMessage', async function(msgsDatabase) {
-                for (let i = 0; i < msgsDatabase.length; i++) {
-                    const id = i;
-                    const from = msgsDatabase[i]['users']['from'];
-                    const to = msgsDatabase[i]['users']['to'];
-                    const message = msgsDatabase[i]['message'];
-                    let objdatabase = {
-                        id: id,
+            socket.on('previousMessageFrom', async function(msgsDatabaseFrom) {
+                for (let i = 0; i < msgsDatabaseFrom.length; i++) {
+                    const data = msgsDatabaseFrom[i]['createdAt'];
+                    const from = msgsDatabaseFrom[i]['users']['from'];
+                    const to = msgsDatabaseFrom[i]['users']['to'];
+                    const message = msgsDatabaseFrom[i]['message'];
+                    console.log(data)
+                    let objdatabaseFrom = {
                         message: message,
                         users: {
                             from: from,
                             to: to,
                         }
                     };
-                    await renderMessage(objdatabase);
+                    await renderMessageFrom(objdatabaseFrom);
                 }
             }); 
+
+            socket.on('previousMessageTo', async function(msgsDatabaseTo) {
+                for (let i = 0; i < msgsDatabaseTo.length; i++) {
+                    const data = msgsDatabaseTo[i]['createdAt'];
+                    const from = msgsDatabaseTo[i]['users']['from'];
+                    const to = msgsDatabaseTo[i]['users']['to'];
+                    const message = msgsDatabaseTo[i]['message'];
+                    console.log(data)
+                    let objdatabaseTo = {
+                        message: message,
+                        users: {
+                            from: from,
+                            to: to,
+                        }
+                    };
+                    await renderMessageTo(objdatabaseTo);
+                }
+            });
+
             
             $('#chat').submit(function(event) {
                 event.preventDefault();
                 let from = $('input[name=user]').val();
-                let to = $('input[name=to]').val();
+                let toDos = $('input[name=toDo]').val();
                 let message = $('input[name=mensagem]').val();
     
-                if (from.length && message.length) {
-                    let mensagemObj = {
+                    if (from.length && message.length) {
+                        let mensagemObj = {
                         message: message,
                         users: {
                             from: from,
-                            to: to,
+                            to: toDos,
                         }
                     };
-                    renderMessage(mensagemObj);
+                    renderMessageFrom(mensagemObj);
                     socket.emit('sendMessage', mensagemObj);
                     $('input[name=mensagem]').val("");
                 }

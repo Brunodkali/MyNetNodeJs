@@ -36,8 +36,16 @@ io.on('connection', async (socket) => {
         from: from,
         to: to,
       },
-    });
-    socket.emit('previousMessage', msgsDatabase);
+    }).sort({datefield: -1});
+    const msgsDatabase2 = await Mensagens.find({
+      users: {
+        from: to,
+        to: from,
+      },
+    }).sort({datefield: -1});
+    
+    socket.emit('previousMessageFrom', msgsDatabase);
+    socket.emit('previousMessageTo', msgsDatabase2);
   });
 
   socket.on('sendMessage', async data => {
