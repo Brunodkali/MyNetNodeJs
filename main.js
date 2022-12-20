@@ -60,6 +60,7 @@ io.on('connection', async (socket) => {
           to
         },
       });
+      socket.broadcast.emit('receveidMessage', msgadd)
     }catch(err) {
       return err;
     }

@@ -79,7 +79,7 @@
         </script>
 
         <script type="text/javascript">
-            var socket = io();
+            var socket = io('http://localhost:3000');
 
             async function renderMessageFrom(message) {
                 await $('.texto-mensagens').append('<div class="envia"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>')
@@ -141,6 +141,10 @@
                 }
             });
 
+            socket.on('receveidMessage', async function(msgsDatabase) {
+                await renderMessageTo(msgsDatabase);
+            });
+ 
             
             $('#chat').submit(function(event) {
                 event.preventDefault();
