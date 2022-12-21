@@ -105,47 +105,26 @@
                     socket.emit('escolhaPessoa', mensagemObj);
                 });
            
-            socket.on('previousMessageFrom', async function(msgsDatabaseFrom) {
-                for (let i = 0; i < msgsDatabaseFrom.length; i++) {
-                    const data = msgsDatabaseFrom[i]['createdAt'];
-                    const from = msgsDatabaseFrom[i]['users']['from'];
-                    const to = msgsDatabaseFrom[i]['users']['to'];
-                    const message = msgsDatabaseFrom[i]['message'];
-                    console.log(data)
-                    let objdatabaseFrom = {
+            socket.on('previousMessage', async function(msgsDatabase) {
+                for (let i = 0; i < msgsDatabase.length; i++) {
+                    const from = msgsDatabase[i]['users']['from'];
+                    const to = msgsDatabase[i]['users']['to'];
+                    const message = msgsDatabase[i]['message'];
+                    let objdatabase = {
                         message: message,
                         users: {
                             from: from,
                             to: to,
                         }
                     };
-                    await renderMessageFrom(objdatabaseFrom);
+                    await renderMessageFrom(objdatabase);
                 }
             }); 
-
-            socket.on('previousMessageTo', async function(msgsDatabaseTo) {
-                for (let i = 0; i < msgsDatabaseTo.length; i++) {
-                    const data = msgsDatabaseTo[i]['createdAt'];
-                    const from = msgsDatabaseTo[i]['users']['from'];
-                    const to = msgsDatabaseTo[i]['users']['to'];
-                    const message = msgsDatabaseTo[i]['message'];
-                    console.log(data)
-                    let objdatabaseTo = {
-                        message: message,
-                        users: {
-                            from: from,
-                            to: to,
-                        }
-                    };
-                    await renderMessageTo(objdatabaseTo);
-                }
-            });
 
             socket.on('receveidMessage', async function(msgsDatabase) {
                 await renderMessageTo(msgsDatabase);
             });
  
-            
             $('#chat').submit(function(event) {
                 event.preventDefault();
                 let from = $('input[name=user]').val();
