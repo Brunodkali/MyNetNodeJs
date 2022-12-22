@@ -5,13 +5,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script Referrer-Policy: no-referrer-when-downgrade src="https://accounts.google.com/gsi/client" async defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js" integrity="sha512-YeeA/Qxn5hYdkukScTCNNOhTrv1C2RubAGButJ1rmgQwZf/HdRaCGl+JAVkqsqaNRaYNHdheiuKKuPf9mDcqKg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <link rel="stylesheet" href="/public/css/style.css"/>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet"> 
 
         <title>Tela Inicial</title>
@@ -26,6 +23,7 @@
                         <% for(let i = 0; i < listaUsuarios.length; i++) {%>
                         <form id='<%= i %>' class="form">
                             <input type="submit" name="to" value='<%= listaUsuarios[i].name[0].toUpperCase() + listaUsuarios[i].name.substr(1) %>'></>
+                            <input type="hidden" name="emailTo" value='<%= listaUsuarios[i].email %>'</>
                             <i class="fa fa-ellipsis-vertical"></i>
                         </form>
                         <% } %>
@@ -65,7 +63,7 @@
                 <form id="chat" class="div-mensagens">
                     <div class="texto-mensagens"></div>
                     <div class="input-mensagens">
-                        <input name="toDo" value='0' hidden></>
+                        <input name="toDo" value='' hidden></>
                         <input type="text" name="mensagem" placeholder="Digite uma mensagem..." autocomplete="off">
                         <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
@@ -78,76 +76,99 @@
             document.getElementById("email").value = '<%= email %>';
         </script>
 
-        <script type="text/javascript">
-            var socket = io('http://localhost:3000');
+    <!-- Socket.Io -->
+    <script src="https://cdn.socket.io/4.5.3/socket.io.min.js" integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi" crossorigin="anonymous"></script>
+    <!-- Jquery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- JS -->
+    <script>
+        var socket = io('http://localhost:3000', {
+            transports: ['websocket'],
+            withCredentials: true,
+        });
 
-            async function renderMessageFrom(message) {
-                await $('.texto-mensagens').append('<div class="envia"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>')
-            }
+        async function renderMessage(message) {
+            await $('.texto-mensagens').append('<div class="envia"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>');
+        }
+        async function renderMessageTo(message) {
+            await $('.texto-mensagens').append('<div class="recebe"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>');
+        }
 
-            async function renderMessageTo(message) {
-                await $('.texto-mensagens').append('<div class="recebe"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>')
-            }
+        $('.form').submit(function(event) {
+            event.preventDefault();
+            let id = $(this).attr("id");
+            let from = $('input[name=user]').val();
+            let to = $(`#${id}`).find(`input[name=to]`).val();
+            let toDo = $('input[name=toDo]').val(`${to}`);
+            let mensagemObj = {
+                users: {
+                    idMessage: 1,
+                    from: from,
+                    to: to,
+                    }
+                };
+                $('.texto-mensagens').html("");
+                socket.emit('escolhaPessoa', mensagemObj);
+            });
 
-            $('.form').submit(function(event) {
-                event.preventDefault();
-                let id = $(this).attr("id");
-                let from = $('input[name=user]').val();
-                let to = $(`#${id}`).find(`input[name=to]`).val();
-                let toDo = $('input[name=toDo]').val(`${to}`);
-                let mensagemObj = {
+        socket.on('previousMessage', async function(msgsDatabase) {
+            for (let i = 0; i < msgsDatabase.length; i++) {
+                const from = msgsDatabase[i]['users']['from'];
+                const to = msgsDatabase[i]['users']['to'];
+                const message = msgsDatabase[i]['message'];
+                let objdatabase = {
+                    message: message,
                     users: {
                         from: from,
                         to: to,
-                        }
-                    };
-                    $('.texto-mensagens').html("");
-                    socket.emit('escolhaPessoa', mensagemObj);
-                });
-           
-            socket.on('previousMessage', async function(msgsDatabase) {
-                for (let i = 0; i < msgsDatabase.length; i++) {
-                    const from = msgsDatabase[i]['users']['from'];
-                    const to = msgsDatabase[i]['users']['to'];
-                    const message = msgsDatabase[i]['message'];
-                    let objdatabase = {
-                        message: message,
-                        users: {
-                            from: from,
-                            to: to,
-                        }
-                    };
-                    await renderMessageFrom(objdatabase);
-                }
-            }); 
+                    }
+                };
+                await renderMessage(objdatabase);
+            }
+        }); 
 
-            socket.on('receveidMessage', async function(msgsDatabase) {
-                await renderMessageTo(msgsDatabase);
-            });
- 
-            $('#chat').submit(function(event) {
-                event.preventDefault();
-                let from = $('input[name=user]').val();
-                let toDos = $('input[name=toDo]').val();
-                let message = $('input[name=mensagem]').val();
-    
-                    if (from.length && message.length) {
-                        let mensagemObj = {
-                        message: message,
-                        users: {
-                            from: from,
-                            to: toDos,
-                        }
-                    };
-                    renderMessageFrom(mensagemObj);
-                    socket.emit('sendMessage', mensagemObj);
-                    $('input[name=mensagem]').val("");
-                }
-            });
-        </script>
+        socket.on('previousMessageTo', async function(msgsDatabase) {
+            for (let i = 0; i < msgsDatabase.length; i++) {
+                const from = msgsDatabase[i]['users']['from'];
+                const to = msgsDatabase[i]['users']['to'];
+                const message = msgsDatabase[i]['message'];
+                let objdatabase = {
+                    message: message,
+                    users: {
+                        from: from,
+                        to: to,
+                    }
+                };
+                await renderMessageTo(objdatabase);
+            }
+        }); 
 
-        <!-- Ícones -->
-        <script src="https://kit.fontawesome.com/a9ac96b7ba.js" 
-        crossorigin="anonymous"></script>
+        socket.on('receveidMessage', async function(msgsDatabase) {
+            await renderMessage(msgsDatabase);
+        });
+
+        $('#chat').submit(function(event) {
+            event.preventDefault();
+            let from = $('input[name=user]').val();
+            let toDos = $('input[name=toDo]').val();
+            let message = $('input[name=mensagem]').val();
+
+                if (from.length && message.length) {
+                    let mensagemObj = {
+                    message: message,
+                    idMessage: 1,
+                    users: {
+                        from: from,
+                        to: toDos,
+                    }
+                };
+                renderMessage(mensagemObj);
+                socket.emit('sendMessage', mensagemObj);
+                $('input[name=mensagem]').val("");
+            }
+        });
+    </script>
+    <!-- Ícones -->
+    <script src="https://kit.fontawesome.com/a9ac96b7ba.js" crossorigin="anonymous"></script>
     </body>
 </html>
