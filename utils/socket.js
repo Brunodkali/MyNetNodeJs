@@ -11,12 +11,13 @@ function socket(server) {
         socket.on('escolhaPessoa', async data => {
           const from = data['users']['from'];
           const to =  data['users']['to'];
-          const msgsDatabase = await Mensagens.find({ users: {from: from, to: to }}).sort({datefield: -1});
-          console.log(msgsDatabase);
-          const msgsDatabaseTo = await Mensagens.find({ users: {from: to, to: from }}).sort({datefield: -1});
-          console.log(msgsDatabaseTo);
-          socket.emit('previousMessage', msgsDatabase);
-          socket.emit('previousMessageTo', msgsDatabaseTo);
+          const msgsDatabase =  await Mensagens.find( { users: {  from: from, to: to } });
+          const msgsDatabase2 =  await Mensagens.find( { users: { from: to, to: from } });
+          var arrayMsg = [];
+       
+          arrayMsg.push(msgsDatabase);
+          arrayMsg.push(msgsDatabase2);
+          socket.emit('previousMessage', arrayMsg);
         });
       
         socket.on('sendMessage', async data => {
@@ -29,9 +30,9 @@ function socket(server) {
               users: {
                 from,
                 to
-              },
+              }
             });
-            socket.broadcast.emit('receveidMessage', msgadd)
+            io.sockets.emit('receveidMessage', msgadd)
           }catch(err) {
             return err;
           }

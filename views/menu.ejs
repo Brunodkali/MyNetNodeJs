@@ -83,15 +83,14 @@
     <!-- JS -->
     <script>
         var socket = io('http://localhost:3000', {
-            transports: ['websocket'],
-            withCredentials: true,
+            transports: ['websocket']
         });
 
-        async function renderMessage(message) {
-            await $('.texto-mensagens').append('<div class="envia"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>');
+        async function renderMessage(froming) {
+            await $('.texto-mensagens').append('<div class="envia"><strong>' + froming['users']['from'] + '</strong>:' + froming['message'] + '</div><br>');
         }
-        async function renderMessageTo(message) {
-            await $('.texto-mensagens').append('<div class="recebe"><strong>' + message.users.from + '</strong>:' + message.message + '</div><br>');
+        async function renderMessageTo(toing) {
+            await $('.texto-mensagens').append('<div class="recebe"><strong>' + toing['users']['from'] + '</strong>:'+ toing['message'] + '</div><br>');
         }
 
         $('.form').submit(function(event) {
@@ -100,74 +99,65 @@
             let from = $('input[name=user]').val();
             let to = $(`#${id}`).find(`input[name=to]`).val();
             let toDo = $('input[name=toDo]').val(`${to}`);
-            let mensagemObj = {
+            let mensagemObjSubmit = {
                 users: {
-                    idMessage: 1,
                     from: from,
                     to: to,
-                    }
-                };
-                $('.texto-mensagens').html("");
-                socket.emit('escolhaPessoa', mensagemObj);
-            });
+                }
+            };
+            $('.texto-mensagens').html("");
+            socket.emit('escolhaPessoa', mensagemObjSubmit);
+        });
 
         socket.on('previousMessage', async function(msgsDatabase) {
-            for (let i = 0; i < msgsDatabase.length; i++) {
-                const from = msgsDatabase[i]['users']['from'];
-                const to = msgsDatabase[i]['users']['to'];
-                const message = msgsDatabase[i]['message'];
-                let objdatabase = {
-                    message: message,
-                    users: {
-                        from: from,
-                        to: to,
+            const buchechaDaDebora = 1000;
+            if (msgsDatabase[0].length > 0 && msgsDatabase[1].length > 0) {
+                console.log(msgsDatabase[0].length)
+                for (let i = 0; i < buchechaDaDebora; i++) {
+                    const froming = msgsDatabase[0][i];
+                    const toing = msgsDatabase[1][i];
+
+                    if (froming != null) {
+                        await renderMessage(froming);
                     }
-                };
-                await renderMessage(objdatabase);
+                    if (toing != null) {
+                        await renderMessageTo(toing);
+                    }else {
+                        console.log('Msg deu undefined');
+                    }
+                }
+            }else {
+                $('.texto-mensagens').append('<div class="noMessage"><strong>' + 'Inicie uma conversa!' + '</strong></div><br>');
+                setTimeout(function() { 
+                    $('.noMessage').html("");
+                }, 3000);
             }
         }); 
-
-        socket.on('previousMessageTo', async function(msgsDatabase) {
-            for (let i = 0; i < msgsDatabase.length; i++) {
-                const from = msgsDatabase[i]['users']['from'];
-                const to = msgsDatabase[i]['users']['to'];
-                const message = msgsDatabase[i]['message'];
-                let objdatabase = {
-                    message: message,
-                    users: {
-                        from: from,
-                        to: to,
-                    }
-                };
-                await renderMessageTo(objdatabase);
-            }
-        }); 
-
-        socket.on('receveidMessage', async function(msgsDatabase) {
-            await renderMessage(msgsDatabase);
-        });
 
         $('#chat').submit(function(event) {
             event.preventDefault();
             let from = $('input[name=user]').val();
             let toDos = $('input[name=toDo]').val();
             let message = $('input[name=mensagem]').val();
-
-                if (from.length && message.length) {
-                    let mensagemObj = {
+            
+            if (from.length && message.length) {
+                let mensagemObj = {
                     message: message,
-                    idMessage: 1,
                     users: {
                         from: from,
                         to: toDos,
                     }
                 };
-                renderMessage(mensagemObj);
                 socket.emit('sendMessage', mensagemObj);
                 $('input[name=mensagem]').val("");
             }
         });
-    </script>
+
+        socket.on('receveidMessage', async function(msgAdd) {
+            await renderMessage(msgAdd);
+        });
+
+        </script>
     <!-- Ícones -->
     <script src="https://kit.fontawesome.com/a9ac96b7ba.js" crossorigin="anonymous"></script>
     </body>
