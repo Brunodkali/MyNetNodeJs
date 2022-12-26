@@ -12,6 +12,9 @@ const userSchema = new mongoose.Schema({
     },
     senha: {
         type: String
+    },
+    avatar: {
+        type: String
     }
 });
 

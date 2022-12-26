@@ -13,13 +13,15 @@ module.exports.login = async (req, res) => {
                 let emailUsuario = listaUsuarios[i].email;
                 let senhaUsuario = listaUsuarios[i].senha;
                 let nomeUsuario = listaUsuarios[i].name;
-                
+                let imgAvatar = listaUsuarios[i].avatar;
+
                 if(login == emailUsuario && senhaHash == senhaUsuario){
                     let usuario = nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1);
 
                     res.render('menu', { 
                         usuario: usuario, 
-                        email: emailUsuario, 
+                        email: emailUsuario,
+                        avatarImg: imgAvatar,
                         auth: 'databaseAuth', 
                         listaUsuarios: listaUsuarios,
                     });
@@ -49,7 +51,8 @@ module.exports.registrar = async (req, res) => {
                 let userAdd = await Usuarios.create({
                     name: nome,
                     email: login,
-                    senha: hashSenha
+                    senha: hashSenha,
+                    avatar: './public/imgUsers/avatar0.png',
                 });
                 return res.status(200).render('index');
             }else {
@@ -90,6 +93,24 @@ module.exports.trocarSenha = async (req, res) => {
         }
     }catch(err) {
         return err
+    }
+};
+
+module.exports.selecionarImagem = async (req, res) => {
+    try {
+        let avatar = req.body.valueAvatar;
+        let emailTroca = req.body.emailTroca;
+        let filter = { email: emailTroca };
+        let options = { upsert: false };
+        let avatarImg = { 
+           $set: {
+                avatar: avatar
+            }
+        }
+        let update = await Usuarios.updateOne(filter, avatarImg, options);
+        return res.status(200).render('index');
+    }catch(err) {
+        return err;
     }
 };
 

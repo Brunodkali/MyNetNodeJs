@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/public/css/style.css"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+        <title>Tela de Avatares</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="content-1">         
+                <div id="avatares">
+                    <h3>Selecione seu Avatar</h3> 
+                        <div class="img-avatares">
+                            <form method="POST" action="/selecionarAvatar"> 
+                                <% for(let i = 1; i < listaImg.length; i++) {%>
+                                    <fieldset class="check-image">
+                                        <label for="valueAvatar<%= [i] %>">
+                                            <img id="<%= [i] %>" src="<%= listaImg[i] %>" alt="AVATAR<%= [i] %>" height="130px" width="130px">
+                                            <input id="valueAvatar<%= [i] %>" type="checkbox" name="valueAvatar" value="<%= listaImg[i] %>">
+                                        </label>
+                                    </fieldset>
+                                <% } %>
+                                <p> 
+                                    <label for="senha_login">Confirme seu e-mail</label>
+                                    <input id="email_login" name="emailTroca" required="required" type="email" placeholder="Digite seu e-mail cadastrado" /> 
+                                </p>
+                                <div class="entrar"> 
+                                    <input type="submit" value="Selecionar"/> 
+                                </div>
+                            </form>
+                        </div>
+                    <% if(status == 401){ %>
+                        <h3>Ocorreu um erro na atualização do seu Avatar. Tente novamente!</h3>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </body>
+    <!-- Jquery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</html>

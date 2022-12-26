@@ -27,13 +27,14 @@ routerGoogle.post('/loginGoogle', (req, res) => {
             const payload = ticket.getPayload();
             const nomeUser = payload["name"];
             const emailUser = payload["email"];
+            const imgUser = payload["picture"];
             const listaUsuarios = await database.collection('usuarios').find().toArray();
 
             for (let i = 0; i < listaUsuarios.length; i++) {
                 const userGoogle = listaUsuarios[i]['email'];
 
                 if (userGoogle == emailUser) {
-                    return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
+                    return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, avatarImg: imgUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
                 }
             }
             
@@ -41,8 +42,9 @@ routerGoogle.post('/loginGoogle', (req, res) => {
                 const userAdd = await database.collection('usuarios').insertOne({
                     name: nomeUser,
                     email: emailUser,
+                    avatar: imgUser,
                 });
-                return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
+                return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, avatarImg: imgUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
             }
         }catch(err) {
             return err;

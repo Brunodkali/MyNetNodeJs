@@ -211,7 +211,7 @@ input[type="submit"]:hover {
 
 .div-2 {
     width: 90%;
-    height: 200px;
+    height: 220px;
     border: 0.05rem solid #f4f4f4;
     padding: 10px 5px;
     text-align: center;
@@ -358,4 +358,55 @@ input[type="submit"]:hover {
     margin-left: 5px;
     background-color: rgb(13, 123, 87);
     height: 35px;
+}
+
+/* Avatares */
+
+#avatares {
+    position: absolute;
+    top: 0px;
+    width: calc(90%);   
+    padding: 20px 10% 40px 10%;
+    margin: 0 0 35px 0;
+    background: #f7f7f7;
+    border: 1px solid rgba(147, 184, 189,0.8);
+    border-radius: 2%;
+    animation-duration: 0.5s;
+    animation-timing-function: ease;
+    animation-fill-mode: both;
+    box-shadow: inset 0 0 1em transparent, 0 0 0.5em #333;
+}
+
+.img-avatares {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.img-avatares img {
+    margin: 10px;
+    border-radius: 8px;
+}
+
+.img-avatares img:hover {
+    cursor: pointer;
+}
+
+.check-image label > input{
+    visibility: hidden;
+}
+
+.check-image label > input + img{
+    cursor:pointer;
+    border:4px solid #EEE;
+    border-radius:15px;
+    padding:10px;
+}
+
+.check-image label > input:checked + img{
+    border:4px solid #3F51B5;
+}
+
+fieldset {
+    border: none;
 }

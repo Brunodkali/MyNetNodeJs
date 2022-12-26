@@ -4,7 +4,6 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script Referrer-Policy: no-referrer-when-downgrade src="https://accounts.google.com/gsi/client" async defer></script>
         <link rel="stylesheet" href="/public/css/style.css"/>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,7 +42,7 @@
                 </div>
                 
                 <div class="div-2">
-                    <div><img src=""><i class="fa-regular fa-circle-user"></i></div>
+                    <div><img id="userImg" src="<%= avatarImg %>" height="60px" width="60px" style="border-radius: 5px;"></div>
                     <input id="user" name="user" required="required" type="text" placeholder="Usuário" readonly/>
                     <input id="email" name="email" required="required" type="text" placeholder="E-mail" readonly/>
                     <% if(auth == 'databaseAuth'){ %>
@@ -56,9 +55,12 @@
                     <% } %>
                 </div>
             </div>
+            
             <div class="barra-superior">
                 <button title="Criar Grupo"><i class="fa-solid fa-users"></i></button>
-                <button title="Foto de perfil"><i class="fa-solid fa-camera"></i></button>
+                <% if(auth == 'databaseAuth'){ %>
+                <a href="/selecioneAvatar" title="Avatar"><i class="fa-solid fa-user-pen"></i></a>
+                <% } %>
                 <a href="/logOut" title="LogOut"><i class="fa-solid fa-door-open"></i></a>
                 <form id="chat" class="div-mensagens">
                     <div class="texto-mensagens"></div>
