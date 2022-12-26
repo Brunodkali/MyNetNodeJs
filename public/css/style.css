@@ -279,7 +279,7 @@ input[type="submit"]:hover {
     padding: 10px 0px;
 }
 
-.barra-superior button {
+.barra-superior button, a {
     background-color: transparent;
     border: none;
     font-size: 20px;
@@ -287,7 +287,8 @@ input[type="submit"]:hover {
     margin-right: 30px;
 }
 
-.barra-superior button:hover {
+.barra-superior button:hover, a:hover {
+    cursor: pointer;
     color: rgb(157, 225, 203);
 }
 

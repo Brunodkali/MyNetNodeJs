@@ -29,7 +29,21 @@ routerGoogle.post('/loginGoogle', (req, res) => {
             const emailUser = payload["email"];
             const listaUsuarios = await database.collection('usuarios').find().toArray();
 
-            return res.status(200).render('indexa', { usuario: nomeUser, email: emailUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
+            for (let i = 0; i < listaUsuarios.length; i++) {
+                const userGoogle = listaUsuarios[i]['email'];
+
+                if (userGoogle == emailUser) {
+                    return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
+                }
+            }
+            
+            if (emailUser) {
+                const userAdd = await database.collection('usuarios').insertOne({
+                    name: nomeUser,
+                    email: emailUser,
+                });
+                return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
+            }
         }catch(err) {
             return err;
         }

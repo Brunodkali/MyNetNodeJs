@@ -59,7 +59,7 @@
             <div class="barra-superior">
                 <button title="Criar Grupo"><i class="fa-solid fa-users"></i></button>
                 <button title="Foto de perfil"><i class="fa-solid fa-camera"></i></button>
-                <button title="Configurações"><i class="fa fa-gear"></i></button>
+                <a href="/logOut" title="LogOut"><i class="fa-solid fa-door-open"></i></a>
                 <form id="chat" class="div-mensagens">
                     <div class="texto-mensagens"></div>
                     <div class="input-mensagens">
@@ -81,83 +81,8 @@
     <!-- Jquery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- JS -->
-    <script>
-        var socket = io('http://localhost:3000', {
-            transports: ['websocket']
-        });
-
-        async function renderMessage(froming) {
-            await $('.texto-mensagens').append('<div class="envia"><strong>' + froming['users']['from'] + '</strong>:' + froming['message'] + '</div><br>');
-        }
-        async function renderMessageTo(toing) {
-            await $('.texto-mensagens').append('<div class="recebe"><strong>' + toing['users']['from'] + '</strong>:'+ toing['message'] + '</div><br>');
-        }
-
-        $('.form').submit(function(event) {
-            event.preventDefault();
-            let id = $(this).attr("id");
-            let from = $('input[name=user]').val();
-            let to = $(`#${id}`).find(`input[name=to]`).val();
-            let toDo = $('input[name=toDo]').val(`${to}`);
-            let mensagemObjSubmit = {
-                users: {
-                    from: from,
-                    to: to,
-                }
-            };
-            $('.texto-mensagens').html("");
-            socket.emit('escolhaPessoa', mensagemObjSubmit);
-        });
-
-        socket.on('previousMessage', async function(msgsDatabase) {
-            const buchechaDaDebora = 1000;
-            if (msgsDatabase[0].length > 0 && msgsDatabase[1].length > 0) {
-                console.log(msgsDatabase[0].length)
-                for (let i = 0; i < buchechaDaDebora; i++) {
-                    const froming = msgsDatabase[0][i];
-                    const toing = msgsDatabase[1][i];
-
-                    if (froming != null) {
-                        await renderMessage(froming);
-                    }
-                    if (toing != null) {
-                        await renderMessageTo(toing);
-                    }else {
-                        console.log('Msg deu undefined');
-                    }
-                }
-            }else {
-                $('.texto-mensagens').append('<div class="noMessage"><strong>' + 'Inicie uma conversa!' + '</strong></div><br>');
-                setTimeout(function() { 
-                    $('.noMessage').html("");
-                }, 3000);
-            }
-        }); 
-
-        $('#chat').submit(function(event) {
-            event.preventDefault();
-            let from = $('input[name=user]').val();
-            let toDos = $('input[name=toDo]').val();
-            let message = $('input[name=mensagem]').val();
-            
-            if (from.length && message.length) {
-                let mensagemObj = {
-                    message: message,
-                    users: {
-                        from: from,
-                        to: toDos,
-                    }
-                };
-                socket.emit('sendMessage', mensagemObj);
-                $('input[name=mensagem]').val("");
-            }
-        });
-
-        socket.on('receveidMessage', async function(msgAdd) {
-            await renderMessage(msgAdd);
-        });
-
-        </script>
+    <script src="/public/js/chat.js"></script>
+    <script src="/public/js/app.js"></script>
     <!-- Ícones -->
     <script src="https://kit.fontawesome.com/a9ac96b7ba.js" crossorigin="anonymous"></script>
     </body>

@@ -46,7 +46,7 @@ module.exports.registrar = async (req, res) => {
         try {
             if (senha == confSenha) {
                 let hashSenha = md5(senha);
-                let user = await Usuarios.create({
+                let userAdd = await Usuarios.create({
                     name: nome,
                     email: login,
                     senha: hashSenha
@@ -93,12 +93,12 @@ module.exports.trocarSenha = async (req, res) => {
     }
 };
 
-module.exports.logOut = (req, res, next) => {
+module.exports.logOut = (req, res) => {
   try {
-    if (!req.params.id) return res.json({ msg: "User id is required " });
-    onlineUsers.delete(req.params.id);
-    return res.status(200).send();
-  } catch (ex) {
-    next(ex);
+    return res.status(200).render('index', {
+        auth: 'logOutAuth',
+    });
+  }catch(err) {
+    return err;
   }
 }; 
