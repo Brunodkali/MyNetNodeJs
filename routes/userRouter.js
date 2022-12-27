@@ -1,4 +1,4 @@
-const { listarArquivosDoDiretorio } = require('../public/js/app.js');
+const { listarArquivosDoDiretorio } = require('../utils/app.js');
 const { login, registrar, trocarSenha, logOut, selecionarImagem } = require("../controllers/userController");
 const router = require("express").Router();
 

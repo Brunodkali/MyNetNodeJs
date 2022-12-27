@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
-const MessageSchema = mongoose.Schema(
+const messageSchema = mongoose.Schema(
   {
     message: {
        type: String, required: true
     },
     users: { 
-        from: { type: String },
-        to: { type: String }
+        from: { type: String, required: true },
+        to: { type: String, required: true }
     }
   },
   {
@@ -15,4 +15,4 @@ const MessageSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("mensagens", MessageSchema);
+module.exports = mongoose.model("mensagens", messageSchema);

@@ -1,6 +1,7 @@
 function socket(server) {
     const io = require('socket.io')(server);
     const Mensagens = require("../models/messageModel");
+    const Grupos = require("../models/groupsModel.js");
     
     io.on('connection', async (socket) => {
         console.log(`Chat conectado ${socket.id}`);
@@ -34,6 +35,16 @@ function socket(server) {
           }catch(err) {
             return err;
           }
+        });
+
+        socket.on('escolhaGrupo', async data => {
+          const from = data['users']['from'];
+          const to =  data['users']['to'];
+          const msgFrom =  await Grupos.find( { users: {  from: from, to: to } });
+          const msgTo =  await Grupos.find( { users: { from: to, to: from } });
+          var arrayMsg = msgFrom.concat(msgTo);
+          const orderedArray = arrayMsg.sort((a,b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          socket.emit('previousMessageGrups', orderedArray);
         });
     });
 }

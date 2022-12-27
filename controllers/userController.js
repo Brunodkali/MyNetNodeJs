@@ -1,4 +1,5 @@
 const Usuarios = require("../models/userModel");
+const Grupos = require("../models/groupsModel.js");
 const md5 = require('md5');
 
 module.exports.login = async (req, res) => {
@@ -7,6 +8,7 @@ module.exports.login = async (req, res) => {
         let senha = req.body.senha;
         let senhaHash = md5(senha);
         let listaUsuarios = await Usuarios.find();
+        let listaGrupos = await Grupos.find();
 
         try {
             for(let i = 0; i < listaUsuarios.length; i++) {
@@ -24,6 +26,7 @@ module.exports.login = async (req, res) => {
                         avatarImg: imgAvatar,
                         auth: 'databaseAuth', 
                         listaUsuarios: listaUsuarios,
+                        listaGrupos: listaGrupos
                     });
                 }
             }

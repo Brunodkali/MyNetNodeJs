@@ -29,12 +29,20 @@ routerGoogle.post('/loginGoogle', (req, res) => {
             const emailUser = payload["email"];
             const imgUser = payload["picture"];
             const listaUsuarios = await database.collection('usuarios').find().toArray();
+            const listaGrupos = await database.collection('grupos').find().toArray();
 
             for (let i = 0; i < listaUsuarios.length; i++) {
                 const userGoogle = listaUsuarios[i]['email'];
 
                 if (userGoogle == emailUser) {
-                    return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, avatarImg: imgUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
+                    return res.status(200).render('menu', { 
+                        usuario: nomeUser, 
+                        email: emailUser, 
+                        avatarImg: imgUser, 
+                        auth: 'googleAuth', 
+                        listaUsuarios: listaUsuarios, 
+                        listaGrupos: listaGrupos 
+                    });
                 }
             }
             
@@ -44,7 +52,14 @@ routerGoogle.post('/loginGoogle', (req, res) => {
                     email: emailUser,
                     avatar: imgUser,
                 });
-                return res.status(200).render('menu', { usuario: nomeUser, email: emailUser, avatarImg: imgUser, auth: 'googleAuth', listaUsuarios: listaUsuarios });
+                return res.status(200).render('menu', { 
+                    usuario: nomeUser, 
+                    email: emailUser, 
+                    avatarImg: imgUser, 
+                    auth: 'googleAuth', 
+                    listaUsuarios: listaUsuarios, 
+                    listaGrupos: listaGrupos 
+                });
             }
         }catch(err) {
             return err;

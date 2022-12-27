@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script Referrer-Policy: no-referrer-when-downgrade src="https://accounts.google.com/gsi/client" async defer></script>
         <link rel="stylesheet" href="/public/css/style.css"/>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,9 +33,9 @@
                 <h2>Grupos</h2>
                 <div class="div-1">
                     <div>
-                        <% for(let i = 0; i < listaUsuarios.length; i++) {%>
+                        <% for(let i = 0; i < listaGrupos.length; i++) {%>
                         <form class="form">
-                            <input type="submit" name="to" value='<%= listaUsuarios[i].name[0].toUpperCase() + listaUsuarios[i].name.substr(1) %>'></>
+                            <input type="submit" name="to" value='<%= listaGrupos[i].name[0].toUpperCase() + listaUsuarios[i].name.substr(1) %>'></>
                             <i class="fa fa-ellipsis-vertical"></i>
                         </form>
                         <% } %>
@@ -57,7 +58,7 @@
             </div>
             
             <div class="barra-superior">
-                <button title="Criar Grupo"><i class="fa-solid fa-users"></i></button>
+                <a title="Criar Grupo"><i class="fa-solid fa-users"></i></a>
                 <% if(auth == 'databaseAuth'){ %>
                 <a href="/selecioneAvatar" title="Avatar"><i class="fa-solid fa-user-pen"></i></a>
                 <% } %>
