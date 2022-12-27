@@ -3,13 +3,13 @@ const mongoose = require("mongoose");
 const groupsSchema = mongoose.Schema(
   {
     name: {
-       type: String,
+       type: String, require: true
     },
     message: {
-       type: String, required: true
+       type: String,
     },
     from: { 
-        type: String,  required: true
+        type: String,
     }
   },
   {

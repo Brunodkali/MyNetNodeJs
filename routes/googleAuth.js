@@ -30,36 +30,31 @@ routerGoogle.post('/loginGoogle', (req, res) => {
             const imgUser = payload["picture"];
             const listaUsuarios = await database.collection('usuarios').find().toArray();
             const listaGrupos = await database.collection('grupos').find().toArray();
+            let jsonDados = { 
+                usuario: nomeUser, 
+                email: emailUser,
+                avatarImg: imgUser,
+                auth: 'googleAuth', 
+                listaUsuarios: listaUsuarios,
+                listaGrupos: listaGrupos
+            }
+
+            req.session.user = jsonDados;
 
             for (let i = 0; i < listaUsuarios.length; i++) {
                 const userGoogle = listaUsuarios[i]['email'];
 
                 if (userGoogle == emailUser) {
-                    return res.status(200).render('menu', { 
-                        usuario: nomeUser, 
-                        email: emailUser, 
-                        avatarImg: imgUser, 
-                        auth: 'googleAuth', 
-                        listaUsuarios: listaUsuarios, 
-                        listaGrupos: listaGrupos 
-                    });
+                    return res.status(200).render('menu', jsonDados);
                 }
             }
-            
             if (emailUser) {
                 const userAdd = await database.collection('usuarios').insertOne({
                     name: nomeUser,
                     email: emailUser,
                     avatar: imgUser,
                 });
-                return res.status(200).render('menu', { 
-                    usuario: nomeUser, 
-                    email: emailUser, 
-                    avatarImg: imgUser, 
-                    auth: 'googleAuth', 
-                    listaUsuarios: listaUsuarios, 
-                    listaGrupos: listaGrupos 
-                });
+                return res.status(200).render('menu', jsonDados);
             }
         }catch(err) {
             return err;

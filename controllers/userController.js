@@ -19,15 +19,18 @@ module.exports.login = async (req, res) => {
 
                 if(login == emailUsuario && senhaHash == senhaUsuario){
                     let usuario = nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1);
-
-                    res.render('menu', { 
+                    let jsonDados = { 
                         usuario: usuario, 
                         email: emailUsuario,
                         avatarImg: imgAvatar,
                         auth: 'databaseAuth', 
                         listaUsuarios: listaUsuarios,
                         listaGrupos: listaGrupos
-                    });
+                    }
+
+                    req.session.user = jsonDados;
+
+                    res.render('menu', jsonDados);
                 }
             }
             if (login != null || senha != null) {
@@ -101,8 +104,56 @@ module.exports.trocarSenha = async (req, res) => {
 
 module.exports.selecionarImagem = async (req, res) => {
     try {
+        let jsonDados = req.session.user;
         let avatar = req.body.valueAvatar;
         let emailTroca = req.body.emailTroca;
+        let filter = { email: emailTroca };
+        let options = { upsert: false };
+        let avatarImg = { 
+           $set: {
+                avatar: avatar
+            }
+        }
+        let update = await Usuarios.updateOne(filter, avatarImg, options);
+        return res.status(200).render('menu', jsonDados);
+    }catch(err) {
+        return err;
+    }
+};
+
+module.exports.logOut = (req, res) => {
+    try {
+        return res.status(200).render('index');
+    }catch(err) {
+        return err;
+    }
+}; 
+
+module.exports.criarGrupo = async (req, res) => {
+    try {
+        let jsonDados = req.session.user;
+        let nomeGrupo = req.body.nomeGrupo;
+        let usersGrupo = req.body.nameUsersGroup;
+    
+        try {
+            let groupAdd = await Grupos.create({
+                name: nomeGrupo,
+                message: '',
+                from: usersGrupo
+            });
+                return res.status(200).render('menu', jsonDados);
+        }catch(err) {
+            return err;
+        }
+    }catch(err) {
+        return err;   
+    }
+};
+
+module.exports.msgGrupo = async (req, res) => {
+    try {
+        let avatar = req.body.valueAvatar;
+        let emailTroca = req.body.nameUsersGroup;
         let filter = { email: emailTroca };
         let options = { upsert: false };
         let avatarImg = { 
@@ -116,13 +167,3 @@ module.exports.selecionarImagem = async (req, res) => {
         return err;
     }
 };
-
-module.exports.logOut = (req, res) => {
-  try {
-    return res.status(200).render('index', {
-        auth: 'logOutAuth',
-    });
-  }catch(err) {
-    return err;
-  }
-}; 
