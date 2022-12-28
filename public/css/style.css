@@ -139,7 +139,7 @@ input[type="submit"]:hover {
     top: 15%;
 }
 
-/* Debs Front */
+/* Menu */
 
 .conteudo-inicial {
     display: flex;
@@ -173,7 +173,7 @@ input[type="submit"]:hover {
 
 .div-1 form {
     width: 80%;
-    height: 12px;
+    height: 18px;
     border: 0.05rem solid #f4f4f4;
     padding: 10px 5px;
     text-align: center;
@@ -211,7 +211,7 @@ input[type="submit"]:hover {
 
 .div-2 {
     width: 90%;
-    height: 220px;
+    height: 240px;
     border: 0.05rem solid #f4f4f4;
     padding: 10px 5px;
     text-align: center;

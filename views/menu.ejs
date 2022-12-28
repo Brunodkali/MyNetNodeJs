@@ -4,7 +4,6 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script Referrer-Policy: no-referrer-when-downgrade src="https://accounts.google.com/gsi/client" async defer></script>
         <link rel="stylesheet" href="/public/css/style.css"/>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,8 +21,8 @@
                     <div>
                         <% for(let i = 0; i < listaUsuarios.length; i++) {%>
                         <form id='<%= i %>' class="form">
+                            <img src="<%= listaUsuarios[i].avatar%>" alt="AVATAR" height="30px" width="30px" style="border-radius: 25px;">
                             <input type="submit" name="to" value='<%= listaUsuarios[i].name[0].toUpperCase() + listaUsuarios[i].name.substr(1) %>'></>
-                            <input type="hidden" name="emailTo" value='<%= listaUsuarios[i].email %>'</>
                             <i class="fa fa-ellipsis-vertical"></i>
                         </form>
                         <% } %>
@@ -43,7 +42,7 @@
                 </div>
                 
                 <div class="div-2">
-                    <div><img id="userImg" src="<%= avatarImg %>" height="60px" width="60px" style="border-radius: 5px;"></div>
+                    <div><img id="userImg" src="<%= avatarImg %>" height="80px" width="80px" style="border-radius: 25px;"></div>
                     <input id="user" name="user" required="required" type="text" placeholder="Usuário" readonly/>
                     <input id="email" name="email" required="required" type="text" placeholder="E-mail" readonly/>
                     <% if(auth == 'databaseAuth'){ %>
