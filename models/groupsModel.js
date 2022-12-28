@@ -8,7 +8,7 @@ const groupsSchema = mongoose.Schema(
     message: {
        type: String,
     },
-    from: { 
+    users: { 
         type: String,
     }
   },

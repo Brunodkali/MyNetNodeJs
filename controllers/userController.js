@@ -133,13 +133,16 @@ module.exports.criarGrupo = async (req, res) => {
     try {
         let jsonDados = req.session.user;
         let nomeGrupo = req.body.nomeGrupo;
+        
         let usersGrupo = req.body.nameUsersGroup;
+        console.log(usersGrupo)
+        let participantes = [];
     
         try {
             let groupAdd = await Grupos.create({
                 name: nomeGrupo,
                 message: '',
-                from: usersGrupo
+                users: usersGrupo
             });
                 return res.status(200).render('menu', jsonDados);
         }catch(err) {
