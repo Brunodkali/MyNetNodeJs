@@ -4,34 +4,26 @@ const md5 = require('md5');
 
 module.exports.login = async (req, res) => {
     try{
-        let login = req.body.login;
-        let senha = req.body.senha;
-        let senhaHash = md5(senha);
+        let usuario = await Usuarios.find({ email: req.body.login });
         let listaUsuarios = await Usuarios.find();
         let listaGrupos = await Grupos.find();
+        let senhaHash = md5(req.body.senha);
 
         try {
-            for(let i = 0; i < listaUsuarios.length; i++) {
-                let emailUsuario = listaUsuarios[i].email;
-                let senhaUsuario = listaUsuarios[i].senha;
-                let nomeUsuario = listaUsuarios[i].name;
-                let imgAvatar = listaUsuarios[i].avatar;
-
-                if(login == emailUsuario && senhaHash == senhaUsuario){
-                    let usuario = nomeUsuario[0].toUpperCase() + nomeUsuario.substr(1);
-                    let jsonDados = { 
-                        usuario: usuario, 
-                        email: emailUsuario,
-                        avatarImg: imgAvatar,
-                        auth: 'databaseAuth', 
-                        listaUsuarios: listaUsuarios,
-                        listaGrupos: listaGrupos
-                    }
-
-                    req.session.user = jsonDados;
-                    res.render('menu', jsonDados);
+            if(req.body.login == usuario[0].email && senhaHash == usuario[0].senha){
+                let jsonDados = { 
+                    usuario: usuario[0].name, 
+                    email: usuario[0].email,
+                    avatarImg: usuario[0].avatar,
+                    auth: 'databaseAuth', 
+                    listaUsuarios: listaUsuarios,
+                    listaGrupos: listaGrupos
                 }
+
+                req.session.user = jsonDados;
+                res.render('menu', jsonDados);
             }
+            
             if (login != null || senha != null) {
                 return res.status(401).redirect('/');
             }
@@ -45,56 +37,40 @@ module.exports.login = async (req, res) => {
 
 module.exports.registrar = async (req, res) => {
     try {
-        let login = req.body.login;
-        let nome = req.body.nome;
-        let senha = req.body.senha;
-        let confSenha = req.body.confSenha;
-    
-        try {
-            if (senha == confSenha) {
-                let hashSenha = md5(senha);
-                await Usuarios.create({
-                    name: nome,
-                    email: login,
-                    senha: hashSenha,
-                    avatar: './public/imgUsers/avatar0.png',
-                });
-                return res.status(200).render('index');
-            }else {
-                return res.status(401).render('cadastro', { status: 401 });
-            }
-        }catch(err) {
-            return err;
+        if (req.body.senha == req.body.confSenha) {
+            let hashSenha = md5(req.body.senha);
+
+            await Usuarios.create({
+                name: req.body.nome,
+                email: req.body.login,
+                senha: hashSenha,
+                avatar: './public/imgUsers/avatar0.png',
+            });
+            return res.status(200).render('index');
+        }else {
+            return res.status(401).render('cadastro', { status: 401 });
         }
     }catch(err) {
-        return err;   
+        return err;
     }
 };
 
 module.exports.trocarSenha = async (req, res) => {
     try {
-        let emailTroca = req.body.emailTroca;
-        let senhaTroca = req.body.senhaTroca;
-        let confSenhaTroca = req.body.confSenhaTroca;
-    
-        try {
-            if (senhaTroca == confSenhaTroca) {
-                let filter = { email: emailTroca };
-                let options = { upsert: false };
-                let hashSenhaNova = md5(senhaTroca);
-                let senhaNova = { 
-                   $set: {
-                        senha: hashSenhaNova 
-                    }
+        if (req.body.senhaTroca == req.body.confSenhaTroca) {
+            let filter = { email: req.body.emailTroca };
+            let options = { upsert: false };
+            let hashSenhaNova = md5(req.body.senhaTroca);
+            let senhaNova = { 
+                $set: {
+                    senha: hashSenhaNova 
                 }
-                await Usuarios.updateOne(filter, senhaNova, options);
-    
-                return res.status(200).render('index');
-            }else {
-                return res.status(401).render('trocarSenha', { status: 401 });
             }
-        }catch(err) {
-            return err;
+
+            await Usuarios.updateOne(filter, senhaNova, options);
+            return res.status(200).render('index');
+        }else {
+            return res.status(401).render('trocarSenha', { status: 401 });
         }
     }catch(err) {
         return err
@@ -104,15 +80,14 @@ module.exports.trocarSenha = async (req, res) => {
 module.exports.selecionarImagem = async (req, res) => {
     try {
         let jsonDados = req.session.user;
-        let avatar = req.body.valueAvatar;
-        let emailTroca = req.body.emailTroca;
-        let filter = { email: emailTroca };
+        let filter = { email: req.body.emailTroca };
         let options = { upsert: false };
         let avatarImg = { 
            $set: {
-                avatar: avatar
+                avatar: req.body.valueAvatar
             }
         }
+
         await Usuarios.updateOne(filter, avatarImg, options);
         return res.status(200).render('menu', jsonDados);
     }catch(err) {
@@ -132,7 +107,6 @@ module.exports.criarGrupo = async (req, res) => {
     try {
         let jsonDados = req.session.user;
         let nomeGrupo = req.body.nomeGrupo;
-        
         let usersGrupo = req.body.nameUsersGroup;
         console.log(usersGrupo)
         let participantes = [];
@@ -143,7 +117,8 @@ module.exports.criarGrupo = async (req, res) => {
                 message: '',
                 users: usersGrupo
             });
-                return res.status(200).render('menu', jsonDados);
+            
+            return res.status(200).render('menu', jsonDados);
         }catch(err) {
             return err;
         }
@@ -164,6 +139,7 @@ module.exports.msgGrupo = async (req, res) => {
             }
         }
         let update = await Usuarios.updateOne(filter, avatarImg, options);
+
         return res.status(200).render('index');
     }catch(err) {
         return err;
