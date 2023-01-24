@@ -29,7 +29,6 @@ module.exports.login = async (req, res) => {
                     }
 
                     req.session.user = jsonDados;
-
                     res.render('menu', jsonDados);
                 }
             }
@@ -40,7 +39,7 @@ module.exports.login = async (req, res) => {
             return err;
         }
     }catch(err) {
-        return res.send('Ocorreu um erro na autenticação');
+        return res.send(`Ocorreu um erro na autenticação, ${err}`);
     }
 };
 
@@ -54,7 +53,7 @@ module.exports.registrar = async (req, res) => {
         try {
             if (senha == confSenha) {
                 let hashSenha = md5(senha);
-                let userAdd = await Usuarios.create({
+                await Usuarios.create({
                     name: nome,
                     email: login,
                     senha: hashSenha,
@@ -88,7 +87,7 @@ module.exports.trocarSenha = async (req, res) => {
                         senha: hashSenhaNova 
                     }
                 }
-                let update = await Usuarios.updateOne(filter, senhaNova, options);
+                await Usuarios.updateOne(filter, senhaNova, options);
     
                 return res.status(200).render('index');
             }else {
@@ -114,7 +113,7 @@ module.exports.selecionarImagem = async (req, res) => {
                 avatar: avatar
             }
         }
-        let update = await Usuarios.updateOne(filter, avatarImg, options);
+        await Usuarios.updateOne(filter, avatarImg, options);
         return res.status(200).render('menu', jsonDados);
     }catch(err) {
         return err;
